@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html>
-<body>
+<body style="padding:20px;">
+    <div style="display:flex; flex-direction:column; gap:8px; padding-bottom:10px;">
+        <textarea id="msg_container" placeholder="type something to send" cols="60" style="width:fit-content;"></textarea>
+        <button style="width:fit-content;" onclick="javascript:send()">Send</button>
+    </div>
+<textarea id="log_container" readonly rows="20" style="width:100%;"></textarea>
 <script>
-const socket = new WebSocket('ws://localhost:8443');
+    const logger = document.querySelector("#log_container");
+    function log(content) {
+        logger.value += content + "\n";
+    }
+    const socket = new WebSocket('ws://localhost:8443');
 
-socket.onopen = () => {
-  console.log('连接已建立');
-  socket.send('Hello WSS!');
-};
+    socket.onopen = () => {
+      log('连接已建立');
+      socket.send('Hello WSS!');
+    };
 
-socket.onmessage = (e) => {
-  console.log('收到:', e.data);
-};
+    socket.onmessage = (e) => {
+      log('收到:' + e.data);
+    };
 
-socket.onerror = (e) => {
-  console.error('错误:', e);
-};
+    socket.onerror = (e) => {
+      log('错误:' + e);
+    };
+
+    function send() {
+        try {
+            let msg = document.querySelector("#msg_container");
+            socket.send(msg.value);
+        }
+        catch (e) {
+            log('错误:' + e);
+        }
+    }
 </script>
 </body>
 </html>
