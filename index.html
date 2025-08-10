@@ -1,40 +1,53 @@
 <!DOCTYPE html>
 <html>
-<body style="padding:20px;">
+<body style="padding:20px; width:800px;">
     <div style="display:flex; flex-direction:column; gap:8px; padding-bottom:10px;">
-        <textarea id="msg_container" placeholder="type something to send" cols="60" style="width:fit-content;"></textarea>
+        <input id="server_input" value="ws://localhost:8443" placeholder="websocket server address" style="width:100%;" />
+        <button style="width:fit-content;" onclick="javascript:connect()">Connect</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px; padding-bottom:10px;">
+        <textarea id="msg_container" placeholder="type something to send" cols="60" style="width:100%;"></textarea>
         <button style="width:fit-content;" onclick="javascript:send()">Send</button>
     </div>
-<textarea id="log_container" readonly rows="20" style="width:100%;"></textarea>
-<script>
-    const logger = document.querySelector("#log_container");
-    function log(content) {
-        logger.value += content + "\n";
-    }
-    const socket = new WebSocket('ws://localhost:8443');
-
-    socket.onopen = () => {
-      log('连接已建立');
-      socket.send('Hello WSS!');
-    };
-
-    socket.onmessage = (e) => {
-      log('收到:' + e.data);
-    };
-
-    socket.onerror = (e) => {
-      log('错误:' + e);
-    };
-
-    function send() {
-        try {
-            let msg = document.querySelector("#msg_container");
-            socket.send(msg.value);
+    <textarea id="log_container" readonly rows="20" style="width:100%;"></textarea>
+    <script>
+        const logger = document.querySelector("#log_container");
+        function log(content) {
+            logger.value += content + "\n";
         }
-        catch (e) {
-            log('错误:' + e);
+        var socket;
+        function connect(content) {
+            try {
+                let svr_add = document.querySelector("#server_input");
+                socket = new WebSocket(svr_add.value);
+                socket.onopen = () => {
+                    log('连接已建立');
+                    socket.send('Hello WSS!');
+                };
+
+                socket.onmessage = (e) => {
+                    log('收到:' + e.data);
+                };
+
+                socket.onerror = (e) => {
+                    log('错误:' + e);
+                };
+            }
+            catch (e) {
+                log('错误:' + e);
+            }
         }
-    }
-</script>
+
+
+        function send() {
+            try {
+                let msg = document.querySelector("#msg_container");
+                socket.send(msg.value);
+            }
+            catch (e) {
+                log('错误:' + e);
+            }
+        }
+    </script>
 </body>
 </html>
