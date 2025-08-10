@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const socket = new WebSocket('ws://localhost:8443');
+
+socket.onopen = () => {
+  console.log('连接已建立');
+  socket.send('Hello WSS!');
+};
+
+socket.onmessage = (e) => {
+  console.log('收到:', e.data);
+};
+
+socket.onerror = (e) => {
+  console.error('错误:', e);
+};
+</script>
+</body>
+</html>
